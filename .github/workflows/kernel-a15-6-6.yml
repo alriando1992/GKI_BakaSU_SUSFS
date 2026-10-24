@@ -157,6 +157,7 @@ jobs:
     uses: ./.github/workflows/build.yml
     secrets: inherit
     with:
+      use_bore: ${{ inputs.use_bore }}
       clean_build: ${{ inputs.clean_build }}
       android_version: ${{ matrix.android_version }}
       kernel_version: ${{ matrix.kernel_version }}

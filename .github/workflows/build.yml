@@ -904,7 +904,30 @@ jobs:
               fi
             fi
           fi
-
+          
+      - name: Setup BORE Scheduler
+        if: inputs.use_bore == true
+        working-directory: common
+        run: |
+          echo "Cloning BORE scheduler..."
+          git clone https://github.com/alriando1992/bore-scheduler.git ../bore_src
+          
+          # Auto-detect the kernel version (e.g., 5.10, 6.1)
+          KERNEL_VER=$(make kernelversion | cut -d '.' -f 1,2)
+          echo "Detected kernel version: $KERNEL_VER"
+          
+          PATCH_FILE="../bore_src/bore-qki-${KERNEL_VER}.patch"
+          
+          if [ -f "$PATCH_FILE" ]; then
+            echo "Applying patch: $PATCH_FILE"
+            patch -p1 < "$PATCH_FILE"
+            
+            echo "Enabling BORE in defconfig..."
+            echo "CONFIG_SCHED_BORE=y" >> arch/arm64/configs/gki_defconfig
+          else
+            echo "Error: BORE patch for kernel $KERNEL_VER not found in the repository!"
+            exit 1
+          fi
       - name: 克隆 Droidspaces 补丁仓库
         if: inputs.clean_build != true && inputs.droidspaces != 'off'
         run: |

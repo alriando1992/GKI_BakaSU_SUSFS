@@ -57,7 +57,7 @@ on:
         required: false
         type: boolean
         default: false
-        use_bore:
+      use_bore:
         type: boolean
         default: false
       use_zram:
